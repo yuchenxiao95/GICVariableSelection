@@ -28,14 +28,16 @@ function Data_Generation(N, P, k, true_columns, SNR, rho)
 
     # Set the true coefficients for univariate case 
     #coeff_true = [rand(Uniform(5,10),5); rand(Uniform(-10,-5),5); rand(Uniform(2,5),3); rand(Uniform(-5,-2),3)]  # Random values in [-10, 10]
-    # true_beta = zeros(P)
-    # coeff_true = [10 for _ in 1:10]
-    # true_beta[true_columns] .= coeff_true  # Assign true coefficients to the specified columns
+    true_beta = zeros(P)
+    coeff_true = [2 for _ in 1:k]
+    true_beta[true_columns] .= coeff_true  # Assign true coefficients to the specified columns
     #Compute the variance based on SNR
-    # variance = (true_beta' * cov * true_beta) / SNR[5]
-    # std = sqrt(variance)
-    # beta_dic = Dict(true_columns .=> coeff_true)
-    # Y = simulate_glm_outcomes(X, true_beta, family= "Normal", std = std)
+    variance = (true_beta' * cov * true_beta) / SNR[5]
+    std = sqrt(variance)
+    beta_dic = Dict(true_columns .=> coeff_true)
+    Y = LP_to_Y(X, true_beta, family= "Normal", std = std)
+
+
 
 
     # Set the true coefficients for multivariate case 

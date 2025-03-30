@@ -2,7 +2,7 @@ using Random
 
 function GIC_Variable_Selection_Boltzmann(
     X::AbstractMatrix, 
-    Y::AbstractVector, 
+    Y::Union{AbstractVector, AbstractMatrix},
     Init_Columns::AbstractVector{Int}, 
     Calculate_GIC, 
     Calculate_GIC_short;
@@ -33,14 +33,7 @@ function GIC_Variable_Selection_Boltzmann(
 
     # Input validation
     m, n = size(X)
-    if size(Y)[1] != m
-        error("The number of rows in X must match the length of Y.")
-    end
-    if any( Init_Columns .> n) || any( Init_Columns .< 1)
-        error("Initial feature indices must be within 1 to size(X, 2).")
-    end
-    #Y = Y_to_lp(Y, "Poisson")
-    # Initialization
+    
     sets = collect(1:size(X,2))  # Get the feature indices
     shuffle!(sets)
     repeated_list = repeat(sets, Nsim)  # Repeat the list multiple times
@@ -75,16 +68,15 @@ function GIC_Variable_Selection_Boltzmann(
                 A_inv = inv(X_subsets' * X_subsets)
                 GIC_i = Calculate_GIC_short(Y, X_subsets, A_inv)
 
-                delta = GIC_c -  GIC_i
+                delta = tr(GIC_c) -  tr(GIC_i)
               
                 if Float64(rand(Bernoulli(logistic(- delta/T)))) == 1  # Accept update with probability
                     GIC_c = GIC_i
-                    GIC_list[w] = GIC_c
                     GIC_coef_sets = GIC_coef_sets_temp
                     M_inv = A_inv
-                else
-                    GIC_list[w] = GIC_c
+                    current_X = X_subsets    
                 end
+                GIC_list[w] = tr(GIC_c)
                 GIC_coeff[w] = copy(GIC_coef_sets)
 
             elseif z ∉ GIC_coef_sets 
@@ -114,15 +106,14 @@ function GIC_Variable_Selection_Boltzmann(
 
                 if Float64(rand(Bernoulli(logistic(- delta/T)))) == 0  # Accept update with probability
                     GIC_c = GIC_i
-                    GIC_list[w] = GIC_c
                     GIC_coef_sets = GIC_coef_sets_temp
                     M_inv = A_inv
-                else
-                    GIC_list[w] = GIC_c
+                    current_X = X_subsets 
                 end
+
+                GIC_list[w] = tr(GIC_c)
                 GIC_coeff[w] = copy(GIC_coef_sets)
             end
-
             # Increment w after each iteration
             w += 1
         end

@@ -15,10 +15,7 @@ using PrettyTables, CSV
 # end
 
 include("GIC_Calculation.jl")
-include("Comparison_Function.jl")
-include("Evaluation_Function.jl")
-include("Generation.jl")
-#include("GLMNet_Model_Selection.jl")
+#include("Generation.jl")
 include("GIC_Model_Selection.jl")
 include("GIC_Model_Selection_Boltzmann.jl")
 include("Beta_estimate.jl")
@@ -35,9 +32,8 @@ init_cols = sort(sample(1:P, Int64(floor(P/20)), replace=false))
 true_beta
 
 init_cols  = collect(1:P)
-#Y_to_lp(Y, "Poisson")
 @time begin 
-    AIC_tmp = GIC_Variable_Selection(X, Y, init_cols, Calculate_SIC, Calculate_SIC_short, Nsim =5)
+    AIC_tmp = GIC_Variable_Selection(X, Y, init_cols, Calculate_BIC, Calculate_BIC_short, Nsim =5)
 end
 ###################################################################################
 AIC_tmpp = DataFrame(A = AIC_tmp[1], 
@@ -108,15 +104,15 @@ pretty_table(results_df, formatters = (ft_printf("%.8f", [2, 3])))  # Format BIC
 ##############################################################################################
 #Y_to_lp(Y, "Normal")
 @time begin
-    AICB_tmp = GIC_Variable_Selection_Boltzmann(X, Y, init_cols, Calculate_BIC, Calculate_BIC_short, Nsim=10, T = 0.15)
+    AICB_tmp = GIC_Variable_Selection_Boltzmann(X, Y, init_cols, Calculate_SIC, Calculate_SIC_short, Nsim=10, T = 0.1)
 end
 
 AICB_tmpp = DataFrame(A = AICB_tmp[1], 
                     B = AICB_tmp[2])
 #AICB_tmpp_unique = unique(AICB_tmpp, :B)
 Plots.plot(AICB_tmp[1])
-print(setdiff(AICB_tmpp.B[],random_index_true_columns))
-print(setdiff(random_index_true_columns,AICB_tmpp.B[160]))
+print(setdiff(AICB_tmpp.B[end],random_index_true_columns))
+print(setdiff(random_index_true_columns,AICB_tmpp.B[end]))
 
 
 

@@ -69,7 +69,7 @@ function GIC_Variable_Selection(
             # GIC evaluation after removal
             GIC_i = Calculate_GIC_short(Y, X_subsets, A_inv)
 
-            if tr(GIC_i) < tr(GIC_c)  # Keep change if GIC improves
+            if tr(GIC_c) < tr(GIC_i)  # Keep change if GIC improves
                 GIC_c = GIC_i
                 GIC_coef_sets = GIC_coef_sets_temp
                 M_inv = A_inv
