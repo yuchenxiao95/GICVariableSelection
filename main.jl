@@ -227,7 +227,6 @@ print(setdiff(random_index_true_columns, adaptivelasso_index))
 
 #Lasso for multivariate
 @time begin
-    
     cv_model = glmnetcv(X, Y, MvNormal(),alpha=1) 
     # Best lambda (minimizing MSE)
     best_lambda = cv_model.lambda[argmin(cv_model.meanloss)]

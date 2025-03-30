@@ -7,6 +7,28 @@ function Y_to_lp(Y, family::String;
                   n_trials::Union{Nothing, Int64} = nothing, 
                   std::Union{Nothing, Float64} = nothing)
 
+"""
+Transform observed responses `Y` into linear predictors using canonical link functions for various GLM families.
+
+# Arguments
+- `Y::Vector{Float64}`: Observed response vector.
+- `family::String`: Distribution family. Supported options:
+  - `"Bernoulli"`: Binary outcomes (0/1)
+  - `"Binomial"`: Count outcomes with trials
+  - `"Normal"`: Continuous outcomes
+  - `"Poisson"`: Count outcomes
+  - `"Gamma"`: Positive continuous outcomes
+  - `"Exponential"`: Positive continuous outcomes
+
+# Keyword Arguments
+- `shape::Union{Nothing, Float64}`: Shape parameter for Gamma family (default: 1.0).
+- `n_trials::Union{Nothing, Int64}`: Required for Binomial family (number of trials).
+- `std::Union{Nothing, Float64}`: Unused (kept for interface consistency).
+
+# Returns
+- `Vector{Float64}`: Transformed linear predictor.
+"""
+
     # For Binomial: Logit link function (logistic transformation)
     if family == "Binomial"
         if isnothing(n_trials)
@@ -43,6 +65,11 @@ function Y_to_lp(Y, family::String;
     # For Exponential: Log link function
     elseif family == "Exponential"
         return log.(Y .+ 0.1)  # Log link function for Exponential
+
+        # For Normal: Identity link function
+    elseif family == "MultivariateNormal"
+        return Y  # Linear predictor is equal to Y for Normal distribution
+
 
     else
         error("Unsupported family: $family")  # Error if the family is unsupported
