@@ -15,7 +15,6 @@ This Julia package provides variable selection methods using Generalized Informa
 ## Features
 - Compute AIC, BIC, SIC, and several GIC variants
 - GIC-based variable selection
-- Boltzmann reweighting for model selection
 - Simulation utilities for Normal and Multivariate Normal models
 
 ## Installation
@@ -71,12 +70,17 @@ for i in 1:m
 end
 
 variance = (multi_beta' * cov * multi_beta) ./ SNR[5]
-cov_p = fill(rho, m, m)
-for i in 1:m
-    cov_p[i, i] = 1.0
-end
-
+cov_p = fill(rho, m, m); for i in 1:m cov_p[i, i] = 1.0 end
 Y = LP_to_Y(X, multi_beta, family="MultivariateNormal", cov_matrix=cov_p)
+
+init_cols = collect(1:P)
+@time tmp = GIC_Variable_Selection(X, Y, init_cols, Calculate_SIC, Calculate_SIC_short, Nsim=5)
+
+# Summary
+tmp_df = DataFrame(A = tmp[1], B = tmp[2])
+random_index_true_columns = unique(reduce(vcat, multi_beta_true_columns))
+println("False Positives: ", setdiff(tmp[2][end], random_index_true_columns))
+println("False Negatives: ", setdiff(random_index_true_columns, tmp[2][end]))
 
 
 ```
