@@ -42,7 +42,7 @@ Calculate_GIC4, Calculate_GIC4_short,
 Calculate_GIC5, Calculate_GIC5_short,
 Calculate_GIC6, Calculate_GIC6_short,
 GIC_Variable_Selection, GIC_Variable_Selection_Boltzmann,
-Beta_estimate, Y_to_lp, LP_to_Y
+Beta_estimate, Y_to_LP, LP_to_Y
 
 end # module
 
