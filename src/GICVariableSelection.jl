@@ -26,7 +26,7 @@ include("GIC_Model_Selection.jl")
 include("GIC_Model_Selection_Boltzmann.jl")
 include("Beta_estimate.jl")
 include("LP_to_Y.jl")
-include("Y_to_lp.jl")
+include("Y_to_LP.jl")
 
 # Export your public API
 export Calculate_AIC, Calculate_AIC_short,
