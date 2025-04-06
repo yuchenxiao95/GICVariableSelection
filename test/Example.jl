@@ -40,7 +40,7 @@ print(setdiff(tmp[2][end],true_columns))
 print(setdiff(true_columns, tmp[2][end]))
 
 IC, Inverse = Calculate_ICOMPIFIM(Y, X[:,tmp[2][end]])
-
+print("ICOMPIFIM")
 Beta_estimate(Y, X[:,tmp[2][end]], Inverse)
 
 
