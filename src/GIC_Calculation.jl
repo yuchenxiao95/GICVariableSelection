@@ -274,7 +274,7 @@ function Calculate_ICOMP(Y::Union{AbstractVector, AbstractMatrix}, X::AbstractMa
     # Compute ICOMP
     ICOMP = (Y' * Hat_matrix * Y) / T + sample_variance * logdet(Inverse) / T - sample_variance * K * log((tr(Inverse)/K)) / T
 
-    return (CAICF, Inverse)
+    return (ICOMP, Inverse)
 end
 
 function Calculate_ICOMP_short(Y::Union{AbstractVector, AbstractMatrix}, X::AbstractMatrix, Inverse::AbstractMatrix)

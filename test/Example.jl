@@ -2,7 +2,7 @@ Pkg.rm("GICVariableSelection")  # optional, to remove completely
 Pkg.add(url="https://github.com/yuchenxiao95/GICVariableSelection")
 
 using GICVariableSelection, Plots
-
+GICVariableSelection
 
 N, P, k = 1000, 500, 5
 rho = 0.0
@@ -23,7 +23,9 @@ std = sqrt(variance)
 
 Y = LP_to_Y(X, true_beta, family="Normal", std=std)
 
+GICVariableSelection.Calculate_ICOMP(Y, X)
 init_cols  = collect(1:P)
+
 @time begin 
 tmp = GIC_Variable_Selection(X, Y, init_cols, Calculate_ICOMP, Calculate_ICOMP_short, Nsim=8)
 end

@@ -25,7 +25,7 @@ using Test
     Y = LP_to_Y(X, true_beta, family="Normal", std=std)
 
     init_cols  = collect(1:P)
-    tmp = GIC_Variable_Selection(X, Y, init_cols, Calculate_BIC, Calculate_BIC_short, Nsim=5)
+    tmp = GIC_Variable_Selection(X, Y, init_cols, Calculate_BIC, Calculate_BIC_short, Nsim=8)
 
     estimated = tmp[2][end]
     @test typeof(tmp[1]) == Vector{Float64}
@@ -56,7 +56,7 @@ end
     Y = LP_to_Y(X, true_beta, family="Poisson")
 
     init_cols  = collect(1:P)
-    tmp = GIC_Variable_Selection(X, Y_to_LP(Y,"Poisson"), init_cols, Calculate_SIC, Calculate_SIC_short, Nsim=5)
+    tmp = GIC_Variable_Selection(X, Y_to_LP(Y,"Poisson"), init_cols, Calculate_SIC, Calculate_SIC_short, Nsim=8)
 
     estimated = tmp[2][end]
     @test typeof(tmp[1]) == Vector{Float64}
