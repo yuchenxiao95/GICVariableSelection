@@ -258,7 +258,7 @@ X = Matrix(rand(MvNormal(mu, cov), N)')
 
 
 # ICOMP Functions
-function Calculate_ICMOP(Y::Union{AbstractVector, AbstractMatrix}, X::AbstractMatrix)
+function Calculate_ICOMP(Y::Union{AbstractVector, AbstractMatrix}, X::AbstractMatrix)
 
     # Get dimensions
     T, K = size(X, 1), size(X, 2)
