@@ -28,7 +28,7 @@ Y = LP_to_Y(X, true_beta, family="Normal", std=std)
 
 init_cols  = collect(1:P)
 @time begin 
-tmp = GIC_Variable_Selection(X, Y, init_cols, Calculate_BIC, Calculate_BIC_short, Nsim=10)
+tmp = GIC_Variable_Selection(X, Y, init_cols, Calculate_ICOMPIFIM, Calculate_ICOMPIFIM_short, Nsim=10)
 end
 
 tmpp = DataFrame(A = tmp[1], 
@@ -39,8 +39,7 @@ Plots.plot(tmp[1])
 print(setdiff(tmp[2][end],true_columns))
 print(setdiff(true_columns, tmp[2][end]))
 
-IC, Inverse = Calculate_BIC(Y, X[:,tmp[2][end]])
-
+IC, Inverse = Calculate_ICOMPIFIM(Y, X[:,tmp[2][end]])
 
 Beta_estimate(Y, X[:,tmp[2][end]], Inverse)
 
