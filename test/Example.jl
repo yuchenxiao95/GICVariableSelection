@@ -25,7 +25,7 @@ Y = LP_to_Y(X, true_beta, family="Normal", std=std)
 
 init_cols  = collect(1:P)
 @time begin 
-tmp = GIC_Variable_Selection(X, Y, init_cols, Calculate_ICMOP, Calculate_ICOMP_short, Nsim=8)
+tmp = GIC_Variable_Selection(X, Y, init_cols, Calculate_ICOMP, Calculate_ICOMP_short, Nsim=8)
 end
 
 tmpp = DataFrame(A = tmp[1], 
