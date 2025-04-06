@@ -244,19 +244,6 @@ function Calculate_CAIC_short(Y::Union{AbstractVector, AbstractMatrix}, X::Abstr
     return CAIC
 end
 
-N, P, k = 1000, 500, 5
-rho = 0.0
-true_columns = sort(sample(1:P, k, replace=false))
-SNR = [0.09, 0.14, 0.25, 0.42, 0.71, 1.22, 2.07, 3.52, 6.00]
-
-mu = zeros(P)
-cov = fill(rho, P, P)
-for i in 1:P
-cov[i, i] = 1.0
-end
-X = Matrix(rand(MvNormal(mu, cov), N)')
-
-
 # ICOMP Functions
 function Calculate_ICOMP(Y::Union{AbstractVector, AbstractMatrix}, X::AbstractMatrix)
 
@@ -272,7 +259,8 @@ function Calculate_ICOMP(Y::Union{AbstractVector, AbstractMatrix}, X::AbstractMa
     sample_variance = (residuals' * residuals) / (T-K)
 
     # Compute ICOMP
-    ICOMP = (Y' * Hat_matrix * Y) / T + sample_variance * logdet(Inverse) / T - sample_variance * K * log((tr(Inverse)/K)) / T
+    ICOMP = (Y' * Hat_matrix * Y) / T - (K * sample_variance) / sqrt(T) +
+    sample_variance * logdet(Inverse) / T - sample_variance * K * log((tr(Inverse)/K)) / T
 
     return (ICOMP, Inverse)
 end
@@ -290,8 +278,8 @@ function Calculate_ICOMP_short(Y::Union{AbstractVector, AbstractMatrix}, X::Abst
     sample_variance = (residuals' * residuals) / (T-K)
 
     # Compute ICOMP
-      # Compute ICOMP
-    ICOMP = (Y' * Hat_matrix * Y) / T + sample_variance * logdet(Inverse) / T - sample_variance * K * log((tr(Inverse)/K)) / T
+    ICOMP = (Y' * Hat_matrix * Y) / T - (K * sample_variance) / sqrt(T) +
+    sample_variance * logdet(Inverse) / T - sample_variance * K * log((tr(Inverse)/K)) / T
 
     return ICOMP
 end
