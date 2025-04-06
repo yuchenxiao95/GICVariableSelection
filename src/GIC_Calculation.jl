@@ -284,6 +284,50 @@ function Calculate_ICOMP_short(Y::Union{AbstractVector, AbstractMatrix}, X::Abst
     return ICOMP
 end
 
+
+# ICOMPIFIM Functions
+function Calculate_ICOMPIFIM(Y::Union{AbstractVector, AbstractMatrix}, X::AbstractMatrix)
+
+    # Get dimensions
+    T, K = size(X, 1), size(X, 2)
+
+    # Compute inverse and hat matrix
+    Inverse = inv(X' * X)
+    Hat_matrix = X * Inverse * X'
+
+    # Compute residuals and sample variance
+    residuals = Y - Hat_matrix * Y
+    sample_variance = (residuals' * residuals) / (T-K)
+
+    # Compute ICOMP
+    ICOMPIFIM = (Y' * Hat_matrix * Y) / T - (K * sample_variance) / T * log(T) +
+    sample_variance * (logdet(Inverse) + log((2*sample_variance)/T))/ T  - 
+    sample_variance * K * log(((tr(Inverse) + (2*sample_variance)/T)/K)) / T
+
+    return (ICOMPIFIM, Inverse)
+end
+
+function Calculate_ICOMPIFIM_short(Y::Union{AbstractVector, AbstractMatrix}, X::AbstractMatrix, Inverse::AbstractMatrix)
+
+    # Get dimensions
+    T, K = size(X, 1), size(X, 2)
+
+    # Compute hat matrix
+    Hat_matrix = X * Inverse * X'
+
+    # Compute residuals and sample variance
+    residuals = Y - Hat_matrix * Y
+    sample_variance = (residuals' * residuals) / (T-K)
+
+    # Compute ICOMPIFIM
+    ICOMPIFIM = (Y' * Hat_matrix * Y) / T - (K * sample_variance) / T * log(T) +
+    sample_variance * (logdet(Inverse) + log((2*sample_variance)/T))/ T  - 
+    sample_variance * K * log(((tr(Inverse) + (2*sample_variance)/T)/K)) / T
+
+    return ICOMPIFIM
+end
+
+
 # CAICF Functions
 function Calculate_CAICF(Y::Union{AbstractVector, AbstractMatrix}, X::AbstractMatrix)
 

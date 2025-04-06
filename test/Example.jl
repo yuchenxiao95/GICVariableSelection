@@ -7,8 +7,8 @@ Pkg.add(url="https://github.com/yuchenxiao95/GICVariableSelection")
 using GICVariableSelection, Plots, StatsBase, Distributions, DataFrames
 
 
-N, P, k = 3000, 100, 5
-rho = 0.6
+N, P, k = 3000, 500, 5
+rho = 0.7
 true_columns = sort(sample(1:P, k, replace=false))
 SNR = [0.09, 0.14, 0.25, 0.42, 0.71, 1.22, 2.07, 3.52, 6.00]
 
@@ -28,7 +28,7 @@ Y = LP_to_Y(X, true_beta, family="Normal", std=std)
 
 init_cols  = collect(1:P)
 @time begin 
-tmp = GIC_Variable_Selection(X, Y, init_cols, Calculate_ICOMP, Calculate_ICOMP_short, Nsim=10)
+tmp = GIC_Variable_Selection(X, Y, init_cols, Calculate_BIC, Calculate_BIC_short, Nsim=10)
 end
 
 tmpp = DataFrame(A = tmp[1], 
@@ -39,7 +39,7 @@ Plots.plot(tmp[1])
 print(setdiff(tmp[2][end],true_columns))
 print(setdiff(true_columns, tmp[2][end]))
 
-IC, Inverse = Calculate_ICOMP(Y, X[:,tmp[2][end]])
+IC, Inverse = Calculate_BIC(Y, X[:,tmp[2][end]])
 
 
 Beta_estimate(Y, X[:,tmp[2][end]], Inverse)
