@@ -32,6 +32,7 @@ include("Y_to_LP.jl")
 export Calculate_AIC, Calculate_AIC_short,
 Calculate_AIC_c, Calculate_AIC_c_short,
 Calculate_BIC, Calculate_BIC_short,
+Calculate_TIC, Calculate_TIC_short,
 Calculate_CAIC, Calculate_CAIC_short,
 Calculate_CAICF, Calculate_CAICF_short,
 Calculate_SIC, Calculate_SIC_short,
