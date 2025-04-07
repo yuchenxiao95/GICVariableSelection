@@ -29,7 +29,7 @@ other_columns = setdiff(1:P, true_columns)
 for col in replace_columns
     # Pick 2–7 other columns randomly (excluding the current one)
     other_cols = setdiff(other_columns, col)
-    mix_cols = sample(other_cols, rand(2:7); replace = false)
+    mix_cols = sample(other_cols, rand(2:4); replace = false)
 
     # Generate random coefficients for the linear combination
     coeffs = 2*rand(length(mix_cols))  # or normalize if needed
@@ -39,16 +39,17 @@ for col in replace_columns
 end
 
 true_beta = zeros(P)
-true_beta[true_columns] .= 1
+true_beta[true_columns] .= 3
 variance = (true_beta' * cov * true_beta) / SNR[9]
 std = sqrt(variance)
 
 Y = LP_to_Y(X, true_beta, family="Normal", std=std)
 
 
+
 init_cols  = collect(1:P)
 @time begin 
-tmp = GIC_Variable_Selection(X, Y, init_cols, Calculate_ICOMP, Calculate_ICOMP_short, Nsim=5)
+tmp = GIC_Variable_Selection(X, Y, init_cols, Calculate_ICOMP, Calculate_ICOMP_short, Nsim=8)
 end
 
 
@@ -60,24 +61,26 @@ print(setdiff(tmp[2][end],true_columns))
 print(setdiff(true_columns, tmp[2][end]))
 
 
+
 estimate_beta = zeros(P)
-IC, Inverse = Calculate_BIC(Y, X[:,tmp[2][end]])
+IC, Inverse = Calculate_ICOMP(Y, X[:,tmp[2][end]])
 ################
-U, S, V = svd(X[:,tmp[2][end]])
-# Invert the squared singular values
-S_inv2 = Diagonal(1 ./ (S .^ 2))
-# Compute (X'X)^-1 from SVD: V * S^-2 * V'
-Inverse = V * S_inv2 * V'
+# U, S, V = svd(X[:,tmp[2][end]])
+# # Invert the squared singular values
+# S_inv2 = Diagonal(1 ./ (S .^ 2))
+# # Compute (X'X)^-1 from SVD: V * S^-2 * V'
+# Inverse = V * S_inv2 * V'
 ######################
-print("SIC")
+print("ICOMP")
 Beta_estimate(Y, X[:,tmp[2][end]], Inverse)
 estimate_beta[tmp[2][end]] .= Beta_estimate(Y, X[:,tmp[2][end]], Inverse)
+estimate_beta[true_columns]
 sum((estimate_beta.- true_beta) .* (estimate_beta.- true_beta)) / P
 
 
 
 estimate_beta = zeros(P)
-IC, Inverse = Calculate_BIC(Y, X[:,true_columns])
+IC, Inverse = Calculate_ICOMP(Y, X[:,true_columns])
 print("True")
 Beta_estimate(Y, X[:,true_columns], Inverse)
 estimate_beta[true_columns] .= Beta_estimate(Y, X[:,true_columns], Inverse)
@@ -86,10 +89,11 @@ sum((estimate_beta .- true_beta) .* (estimate_beta .- true_beta)) / P
 
 
 estimate_beta = zeros(P)
-IC, Inverse = Calculate_BIC(Y, X)
+IC, Inverse = Calculate_ICOMP(Y, X)
 print("Full")
 Beta_estimate(Y, X, Inverse)
 estimate_beta .= Beta_estimate(Y, X, Inverse)
+estimate_beta[true_columns]
 sum((estimate_beta .- true_beta) .* (estimate_beta .- true_beta)) / P
 
 
