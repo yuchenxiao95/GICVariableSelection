@@ -21,22 +21,22 @@ X = Matrix(rand(MvNormal(mu, cov), N)')
 
 # Simulate multicolinearity
 # Choose 5 of them to be replaced
-# num_replace = 3
-# replace_columns = sample(true_columns, num_replace; replace = false)
-# other_columns = setdiff(1:P, true_columns)
+num_replace = 3
+replace_columns = sample(true_columns, num_replace; replace = false)
+other_columns = setdiff(1:P, true_columns)
 
-# # Replace each selected column with a linear combination of 2–7 other columns
-# for col in replace_columns
-#     # Pick 2–7 other columns randomly (excluding the current one)
-#     other_cols = setdiff(other_columns, col)
-#     mix_cols = sample(other_cols, rand(2:4); replace = false)
+# Replace each selected column with a linear combination of 2–7 other columns
+for col in replace_columns
+    # Pick 2–7 other columns randomly (excluding the current one)
+    other_cols = setdiff(other_columns, col)
+    mix_cols = sample(other_cols, rand(2:4); replace = false)
 
-#     # Generate random coefficients for the linear combination
-#     coeffs = 2*rand(length(mix_cols))  # or normalize if needed
+    # Generate random coefficients for the linear combination
+    coeffs = 2*rand(length(mix_cols))  # or normalize if needed
 
-#     # Replace the column with the linear combination
-#     X[:, col] = X[:, mix_cols] * coeffs
-# end
+    # Replace the column with the linear combination
+    X[:, col] = X[:, mix_cols] * coeffs
+end
 
 true_beta = zeros(P)
 true_beta[true_columns] .= 3
@@ -47,9 +47,10 @@ Y = LP_to_Y(X, true_beta, family="Normal", std=std)
 
 
 
+
 init_cols  = collect(1:P)
 @time begin 
-tmp = GIC_Variable_Selection(X, Y, init_cols, Calculate_SIC, Calculate_SIC_short, Nsim=8)
+tmp = GIC_Variable_Selection(X, Y, init_cols, Calculate_ICOMPIFIM, Calculate_SIC_short, Nsim=8)
 end
 
 

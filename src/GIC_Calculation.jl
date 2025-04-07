@@ -302,8 +302,8 @@ function Calculate_ICOMPIFIM(Y::Union{AbstractVector, AbstractMatrix}, X::Abstra
 
     # Compute ICOMP
     ICOMPIFIM = (Y' * Hat_matrix * Y) / T - (K * sample_variance) / T * log(T) +
-    sample_variance * (logdet(Inverse) + log((2*sample_variance)/T))/ T  - 
-    sample_variance * K * log(((tr(Inverse) + (2*sample_variance)/T)/K)) / T
+    sample_variance * (logabsdet(Inverse)[1]  + log((2*sample_variance)/T))/ T  - 
+    sample_variance * K * log(((abs(tr(Inverse)) + (2*sample_variance)/T)/K)) / T
 
     return (ICOMPIFIM, Inverse)
 end
@@ -322,8 +322,8 @@ function Calculate_ICOMPIFIM_short(Y::Union{AbstractVector, AbstractMatrix}, X::
 
     # Compute ICOMPIFIM
     ICOMPIFIM = (Y' * Hat_matrix * Y) / T - (K * sample_variance) / T * log(T) +
-    sample_variance * (logdet(Inverse) + log((2*sample_variance)/T))/ T  - 
-    sample_variance * K * log(((tr(Inverse) + (2*sample_variance)/T)/K)) / T
+    sample_variance * (logabsdet(Inverse)[1]  + log((2*sample_variance)/T))/ T  - 
+    sample_variance * K * log(((abs(tr(Inverse)) + (2*sample_variance)/T)/K)) / T
 
     return ICOMPIFIM
 end
