@@ -48,7 +48,7 @@ Y = LP_to_Y(X, true_beta, family="Normal", std=std)
 
 init_cols  = collect(1:P)
 @time begin 
-tmp = GIC_Variable_Selection(X, Y, init_cols, Calculate_ICOMP, Calculate_ICOMP_short, Nsim=5)
+tmp = GIC_Variable_Selection(X, Y, init_cols, Calculate_BIC, Calculate_BIC_short, Nsim=5)
 end
 
 

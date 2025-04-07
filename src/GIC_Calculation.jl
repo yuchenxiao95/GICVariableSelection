@@ -252,8 +252,8 @@ function Calculate_ICOMP(Y::Union{AbstractVector, AbstractMatrix}, X::AbstractMa
     T, K = size(X, 1), size(X, 2)
 
     # Compute inverse and hat matrix
-    Inverse = inv(X' * X)
-    Hat_matrix = X * Inverse * X'
+    Inverse = pinv(X' * X)
+    Hat_matrix = X * pinv(X)
 
     # Compute residuals and sample variance
     residuals = Y - Hat_matrix * Y
