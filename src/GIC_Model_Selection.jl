@@ -68,7 +68,7 @@ function GIC_Variable_Selection(
 
             # GIC evaluation after removal
             #GIC_i = Calculate_GIC_short(Y, X_subsets, A_inv)
-            GIC_i = Calculate_GIC(Y, X_subsets)
+            GIC_i, A_inv = Calculate_GIC(Y, X_subsets)
 
             if tr(GIC_c) < tr(GIC_i)  # Keep change if GIC improves
                 GIC_c = GIC_i
@@ -101,7 +101,7 @@ function GIC_Variable_Selection(
 
             # GIC evaluation after addition
             #GIC_i = Calculate_GIC_short(Y, X_subsets, A_inv)
-            GIC_i = Calculate_GIC(Y, X_subsets)
+            GIC_i, A_inv = Calculate_GIC(Y, X_subsets)
 
             if tr(GIC_c) < tr(GIC_i)  # Keep change if GIC improves
                 GIC_c = GIC_i
