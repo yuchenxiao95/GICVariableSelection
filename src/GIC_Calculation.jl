@@ -245,44 +245,6 @@ function Calculate_CAIC_short(Y::Union{AbstractVector, AbstractMatrix}, X::Abstr
 end
 
 
-# TIC Functions
-function Calculate_TIC(Y::Union{AbstractVector, AbstractMatrix}, X::AbstractMatrix)
-
-    # Get dimensions
-    T, K = size(X, 1), size(X, 2)
-
-    # Compute inverse and hat matrix
-    Inverse = inv(X' * X)
-    Hat_matrix = X * Inverse * X'
-
-    # Compute residuals and sample variance
-    residuals = Y - Hat_matrix * Y
-    sample_variance = (residuals' * residuals) / (T-K)
-
-    # Compute BIC
-    TIC = (Y' * Hat_matrix * Y) / T - ( residuals' * Hat_matrix * residuals ) / T 
-
-    return (TIC, Inverse)
-end
-
-function Calculate_TIC_short(Y::Union{AbstractVector, AbstractMatrix}, X::AbstractMatrix, Inverse::AbstractMatrix)
-    
-    # Get dimensions
-    T, K = size(X, 1), size(X, 2)
-
-    # Compute hat matrix
-    Hat_matrix = X * Inverse * X'
-
-    # Compute residuals and sample variance
-    residuals = Y - Hat_matrix * Y
-    sample_variance = (residuals' * residuals) / (T-K)
-
-    # Compute TIC
-    TIC = (Y' * Hat_matrix * Y) / T - ( residuals' * Hat_matrix * residuals ) / T 
-
-    return TIC
-end
-
 # ICOMP Functions
 function Calculate_ICOMP(Y::Union{AbstractVector, AbstractMatrix}, X::AbstractMatrix)
 
