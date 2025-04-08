@@ -60,16 +60,18 @@ ICOMP = (Y' * Hat_matrix * Y) / T - (K * sample_variance) / sqrt(T) -
 2*( K * log(abs(tr(Inverse) / K)) - logabsdet(Inverse)[1])
 
 
-det(sample_variance *Inverse)
 
-log(tr(inv(X[:,true_columns]' * X[:,true_columns]))/4) - log(det(inv(X[:,true_columns]' * X[:,true_columns])))
 
+4*log(tr(sample_variance * inv(X[:,true_columns]' * X[:,true_columns]))/4) - log(det(inv(X[:,true_columns]' * X[:,true_columns])))
+
+
+5*log(tr(inv( X[:,tmp[2][end]]' * X[:,tmp[2][end]] ))/5) - log(det(inv(X[:,tmp[2][end]]' * X[:,tmp[2][end]])))
 
 
 #init_cols  = collect(1:P)
 init_cols = sort(sample(1:P, Int64(floor(P/5)), replace=false))
 @time begin 
-tmp = GIC_Variable_Selection(X, Y, init_cols, Calculate_SIC, Calculate_SIC_short, Nsim=20)
+tmp = GIC_Variable_Selection(X, Y, init_cols, Calculate_ICOMP, Calculate_ICOMP_short, Nsim=20)
 end
 
 
