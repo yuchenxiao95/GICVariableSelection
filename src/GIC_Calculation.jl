@@ -260,9 +260,9 @@ function Calculate_ICOMP(Y::Union{AbstractVector, AbstractMatrix}, X::AbstractMa
     sample_variance = (residuals' * residuals) / (T-K)
 
     # Compute ICOMP
-    ICOMP = (Y' * Hat_matrix * Y) / T - (K * sample_variance) / sqrt(T) +
-    2*(logabsdet(sample_variance * Inverse)[1] -  K * log(abs(tr( sample_variance * Inverse) / K)))
-
+    ICOMP = (Y' * Hat_matrix * Y) / T - (K * sample_variance) / sqrt(T) -
+    2*( K * log(abs(tr(Inverse) / K)) - logabsdet(Inverse)[1])
+    
     return (ICOMP, Inverse)
 end
 
@@ -279,9 +279,9 @@ function Calculate_ICOMP_short(Y::Union{AbstractVector, AbstractMatrix}, X::Abst
     sample_variance = (residuals' * residuals) / (T-K)
 
     # Compute ICOMP
-    ICOMP = (Y' * Hat_matrix * Y) / T - (K * sample_variance) / sqrt(T) +
-    2*(logabsdet(sample_variance * Inverse)[1] -  K * log(abs(tr( sample_variance * Inverse) / K)))
-
+    ICOMP = (Y' * Hat_matrix * Y) / T - (K * sample_variance) / sqrt(T) -
+    2*( K * log(abs(tr(Inverse) / K)) - logabsdet(Inverse)[1])
+    
     return ICOMP
 end
 

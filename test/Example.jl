@@ -56,8 +56,13 @@ Hat_matrix = X * Inverse * X'
 residuals = Y - Hat_matrix * Y
 sample_variance = (residuals' * residuals) / (T-K)
 # Compute ICOMP
-ICOMP = (Y' * Hat_matrix * Y) / T - (K * sample_variance) / sqrt(T) +
-2*(logabsdet(Inverse)[1] -  K * log(abs(tr(Inverse) / K)))
+ICOMP = (Y' * Hat_matrix * Y) / T - (K * sample_variance) / sqrt(T) -
+2*( K * log(abs(tr(Inverse) / K)) - logabsdet(Inverse)[1])
+
+
+det(sample_variance *Inverse)
+
+log(tr(inv(X[:,true_columns]' * X[:,true_columns]))/4) - log(det(inv(X[:,true_columns]' * X[:,true_columns])))
 
 
 
