@@ -8,7 +8,7 @@ using GICVariableSelection, Plots, StatsBase, Distributions, DataFrames, LinearA
 
 
 Random.seed!(1234) 
-N, P, k = 3000, 10, 4
+N, P, k = 3000, 100, 10
 rho = 0.1
 true_columns = sort(sample(1:P, k, replace=false))
 SNR = [0.09, 0.14, 0.25, 0.42, 0.71, 1.22, 2.07, 3.52, 6.00]
@@ -22,7 +22,7 @@ X = Matrix(rand(MvNormal(mu, cov), N)')
 
 # Simulate multicolinearity
 # Choose 5 of them to be replaced
-num_replace = 2
+num_replace = 3
 replace_columns = sample(true_columns, num_replace; replace = false)
 other_columns = setdiff(1:P, true_columns)
 
@@ -47,36 +47,53 @@ std = sqrt(variance)
 Y = LP_to_Y(X, true_beta, family="Normal", std=std)
 
 
+#------------------------------------
 # Get dimensions
-T, K = size(X, 1), size(X, 2)
+T, K = size(true_X, 1), size(true_X, 2)
 # Compute inverse and hat matrix
-Inverse = inv(X' * X)
-Hat_matrix = X * Inverse * X'
+Inverse = inv(true_X' * true_X)
+Hat_matrix = true_X * Inverse * true_X'
+est_Y = Hat_matrix * Y
+est_MSE = mean((est_Y .- Y).^2)
 # Compute residuals and sample variance
 residuals = Y - Hat_matrix * Y
 sample_variance = (residuals' * residuals) / (T-K)
 # Compute ICOMP
 ICOMP = (Y' * Hat_matrix * Y) / T - (K * sample_variance) / sqrt(T) -
-2*( K * log(abs(tr(Inverse) / K)) - logabsdet(Inverse)[1])
+(K * log(abs(tr(sample_variance * Inverse) / K)) - logabsdet(sample_variance *Inverse)[1])
+#-----------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------
+# Get dimensions
+T, K = size(est_X , 1), size(est_X , 2)
+# Compute inverse and hat matrix
+Inverse = inv(est_X' * est_X)
+Hat_matrix = est_X  * Inverse * est_X'
+est_Y = Hat_matrix * Y
+est_MSE = mean((est_Y .- Y).^2)
+# Compute residuals and sample variance
+residuals = Y - Hat_matrix * Y
+sample_variance = (residuals' * residuals) / (T-K)
+# Compute ICOMP
+ICOMP = (Y' * Hat_matrix * Y) / T - (K * sample_variance) / sqrt(T) -
+(K * log(abs(tr(sample_variance * Inverse) / K)) - logabsdet(sample_variance *Inverse)[1])
+#-----------------------------------------------------------------------------------------
+
+true_X = X[:,true_columns]
+length(true_columns)*log(tr(inv(X[:,true_columns]' * X[:,true_columns]))/length(true_columns)) - log(det(inv(X[:,true_columns]' * X[:,true_columns])))
 
 
+est_X =  X[:,tmp[2][end]]
+length(tmp[2][end])*log(tr(inv( X[:,tmp[2][end]]' * X[:,tmp[2][end]] ))/length(tmp[2][end])) - log(det(inv(X[:,tmp[2][end]]' * X[:,tmp[2][end]])))
 
 
-4*log(tr(inv(X[:,true_columns]' * X[:,true_columns]))/4) - log(det(inv(X[:,true_columns]' * X[:,true_columns])))
+# 10*log(abs(tr(inv( X' * X )))/10) - logabsdet(inv(X' * X))[1]
 
 
-5*log(tr(inv( X[:,tmp[2][end]]' * X[:,tmp[2][end]] ))/5) - log(det(inv(X[:,tmp[2][end]]' * X[:,tmp[2][end]])))
-
-
-10*log(abs(tr(inv( X' * X )))/10) - logabsdet(inv(X' * X))[1]
-
-
-#init_cols  = collect(1:P)
-init_cols = sort(sample(1:P, Int64(floor(P/5)), replace=false))
+init_cols  = collect(1:P)
+#init_cols = sort(sample(1:P, Int64(floor(P/2)), replace=false))
 @time begin 
-tmp = GIC_Variable_Selection(X, Y, init_cols, Calculate_ICOMP, Calculate_ICOMP_short, Nsim=20)
+tmp = GIC_Variable_Selection(X, Y, init_cols, Calculate_ICOMP, Calculate_ICOMP_short, Nsim=8)
 end
-
 
 tmpp = DataFrame(A = tmp[1], 
                     B = tmp[2])
@@ -84,6 +101,7 @@ Plots.plot(tmp[1])
 #random_index_true_columns = unique(reduce(vcat, multi_beta_true_columns)) 
 print(setdiff(tmp[2][end],true_columns))
 print(setdiff(true_columns, tmp[2][end]))
+
 
 
 
