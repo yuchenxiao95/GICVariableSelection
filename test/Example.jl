@@ -66,9 +66,10 @@ log(tr(inv(X[:,true_columns]' * X[:,true_columns]))/4) - log(det(inv(X[:,true_co
 
 
 
-init_cols  = collect(1:P)
+#init_cols  = collect(1:P)
+init_cols = sort(sample(1:P, Int64(floor(P/5)), replace=false))
 @time begin 
-tmp = GIC_Variable_Selection(X, Y, init_cols, Calculate_ICOMP, Calculate_ICOMP_short, Nsim=20)
+tmp = GIC_Variable_Selection(X, Y, init_cols, Calculate_SIC, Calculate_SIC_short, Nsim=20)
 end
 
 
