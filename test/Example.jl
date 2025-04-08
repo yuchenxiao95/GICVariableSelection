@@ -7,7 +7,7 @@ Pkg.add(url="https://github.com/yuchenxiao95/GICVariableSelection")
 using GICVariableSelection, Plots, StatsBase, Distributions, DataFrames, LinearAlgebra
 
 
-N, P, k = 3000, 300, 5
+N, P, k = 300, 10, 4
 rho = 0.1
 true_columns = sort(sample(1:P, k, replace=false))
 SNR = [0.09, 0.14, 0.25, 0.42, 0.71, 1.22, 2.07, 3.52, 6.00]
@@ -21,7 +21,7 @@ X = Matrix(rand(MvNormal(mu, cov), N)')
 
 # Simulate multicolinearity
 # Choose 5 of them to be replaced
-num_replace = 3
+num_replace = 2
 replace_columns = sample(true_columns, num_replace; replace = false)
 other_columns = setdiff(1:P, true_columns)
 
@@ -50,7 +50,7 @@ Y = LP_to_Y(X, true_beta, family="Normal", std=std)
 
 init_cols  = collect(1:P)
 @time begin 
-tmp = GIC_Variable_Selection(X, Y, init_cols, Calculate_ICOMPIFIM, Calculate_SIC_short, Nsim=8)
+tmp = GIC_Variable_Selection(X, Y, init_cols, Calculate_SIC, Calculate_SIC_short, Nsim=8)
 end
 
 
@@ -64,7 +64,7 @@ print(setdiff(true_columns, tmp[2][end]))
 
 
 estimate_beta = zeros(P)
-IC, Inverse = Calculate_SIC(Y, X[:,tmp[2][end]])
+IC, Inverse = Calculate_ICOMP(Y, X[:,tmp[2][end]])
 ################
 # U, S, V = svd(X[:,tmp[2][end]])
 # # Invert the squared singular values
