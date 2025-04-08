@@ -4,9 +4,10 @@ Pkg.activate(".")
 Pkg.rm("GICVariableSelection")  # optional, to remove completely
 Pkg.add(url="https://github.com/yuchenxiao95/GICVariableSelection")
 
-using GICVariableSelection, Plots, StatsBase, Distributions, DataFrames, LinearAlgebra
+using GICVariableSelection, Plots, StatsBase, Distributions, DataFrames, LinearAlgebra, Random
 
 
+Random.seed!(1234) 
 N, P, k = 3000, 10, 4
 rho = 0.1
 true_columns = sort(sample(1:P, k, replace=false))
