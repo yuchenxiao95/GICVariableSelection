@@ -7,7 +7,7 @@ Pkg.add(url="https://github.com/yuchenxiao95/GICVariableSelection")
 using GICVariableSelection, Plots, StatsBase, Distributions, DataFrames, LinearAlgebra
 
 
-N, P, k = 300, 10, 4
+N, P, k = 3000, 10, 4
 rho = 0.1
 true_columns = sort(sample(1:P, k, replace=false))
 SNR = [0.09, 0.14, 0.25, 0.42, 0.71, 1.22, 2.07, 3.52, 6.00]
@@ -32,7 +32,7 @@ for col in replace_columns
     mix_cols = sample(other_cols, rand(2:4); replace = false)
 
     # Generate random coefficients for the linear combination
-    coeffs = 2*rand(length(mix_cols))  # or normalize if needed
+    coeffs = 3*rand(length(mix_cols))  # or normalize if needed
 
     # Replace the column with the linear combination
     X[:, col] = X[:, mix_cols] * coeffs
@@ -46,11 +46,23 @@ std = sqrt(variance)
 Y = LP_to_Y(X, true_beta, family="Normal", std=std)
 
 
+# Get dimensions
+T, K = size(X, 1), size(X, 2)
+# Compute inverse and hat matrix
+Inverse = inv(X' * X)
+Hat_matrix = X * Inverse * X'
+# Compute residuals and sample variance
+residuals = Y - Hat_matrix * Y
+sample_variance = (residuals' * residuals) / (T-K)
+# Compute ICOMP
+ICOMP = (Y' * Hat_matrix * Y) / T - (K * sample_variance) / sqrt(T) +
+sample_variance * logabsdet(Inverse)[1] / T - sample_variance * K * log(abs(tr(Inverse) / K)) / T
+
 
 
 init_cols  = collect(1:P)
 @time begin 
-tmp = GIC_Variable_Selection(X, Y, init_cols, Calculate_SIC, Calculate_SIC_short, Nsim=8)
+tmp = GIC_Variable_Selection(X, Y, init_cols, Calculate_ICOMP, Calculate_ICOMP_short, Nsim=20)
 end
 
 
