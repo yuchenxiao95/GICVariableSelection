@@ -59,8 +59,9 @@ est_MSE = mean((est_Y .- Y).^2)
 residuals = Y - Hat_matrix * Y
 sample_variance = (residuals' * residuals) / (T-K)
 # Compute ICOMP
-ICOMP = (Y' * Hat_matrix * Y) / T - (K * sample_variance) / sqrt(T) -
+ICOMP = (Y' * Hat_matrix * Y) / T - 
 (K * log(abs(tr(sample_variance * Inverse) / K)) - logabsdet(sample_variance *Inverse)[1])
+#(K * sample_variance) / sqrt(T) -
 #-----------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------
 # Get dimensions
