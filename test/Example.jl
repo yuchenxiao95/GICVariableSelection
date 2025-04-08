@@ -62,10 +62,13 @@ ICOMP = (Y' * Hat_matrix * Y) / T - (K * sample_variance) / sqrt(T) -
 
 
 
-4*log(tr(sample_variance * inv(X[:,true_columns]' * X[:,true_columns]))/4) - log(det(inv(X[:,true_columns]' * X[:,true_columns])))
+4*log(tr(inv(X[:,true_columns]' * X[:,true_columns]))/4) - log(det(inv(X[:,true_columns]' * X[:,true_columns])))
 
 
 5*log(tr(inv( X[:,tmp[2][end]]' * X[:,tmp[2][end]] ))/5) - log(det(inv(X[:,tmp[2][end]]' * X[:,tmp[2][end]])))
+
+
+10*log(abs(tr(inv( X' * X )))/10) - logabsdet(inv(X' * X))[1]
 
 
 #init_cols  = collect(1:P)
@@ -107,6 +110,7 @@ print("True")
 Beta_estimate(Y, X[:,true_columns], Inverse)
 estimate_beta[true_columns] .= Beta_estimate(Y, X[:,true_columns], Inverse)
 sum((estimate_beta .- true_beta) .* (estimate_beta .- true_beta)) / P
+
 
 
 
