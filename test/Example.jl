@@ -8,7 +8,7 @@ using GICVariableSelection, Plots, StatsBase, Distributions, DataFrames, LinearA
 
 
 Random.seed!(1234) 
-N, P, k = 3000, 100, 10
+N, P, k = 5000, 100, 10
 rho = 0.1
 true_columns = sort(sample(1:P, k, replace=false))
 SNR = [0.09, 0.14, 0.25, 0.42, 0.71, 1.22, 2.07, 3.52, 6.00]
@@ -59,9 +59,9 @@ est_MSE = mean((est_Y .- Y).^2)
 residuals = Y - Hat_matrix * Y
 sample_variance = (residuals' * residuals) / (T-K)
 # Compute ICOMP
-ICOMP = (Y' * Hat_matrix * Y) / T - 
+ICOMP = (Y' * Hat_matrix * Y) / T - (K * sample_variance) / sqrt(T) -
 (K * log(abs(tr(sample_variance * Inverse) / K)) - logabsdet(sample_variance *Inverse)[1])
-#(K * sample_variance) / sqrt(T) -
+
 #-----------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------
 # Get dimensions
@@ -81,6 +81,7 @@ ICOMP = (Y' * Hat_matrix * Y) / T - (K * sample_variance) / sqrt(T) -
 
 true_X = X[:,true_columns]
 length(true_columns)*log(tr(inv(X[:,true_columns]' * X[:,true_columns]))/length(true_columns)) - log(det(inv(X[:,true_columns]' * X[:,true_columns])))
+
 
 
 est_X =  X[:,tmp[2][end]]
