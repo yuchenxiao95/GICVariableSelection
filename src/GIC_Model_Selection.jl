@@ -29,7 +29,7 @@ function GIC_Variable_Selection(
     Init_Columns::AbstractVector{Int}, 
     Calculate_GIC, 
     Calculate_GIC_short;
-    Nsim::Int64 = 1
+    Nsim::Int64 = 2
 )
     # --- Input Validation ---
     m, n = size(X)
@@ -37,8 +37,10 @@ function GIC_Variable_Selection(
     @assert m == size(Y, 1) "Sample size mismatch between X and Y."
 
     # --- Initialization ---
-    sets = collect(1:n)  # All feature indices
-    repeated_list = repeat(sets, Nsim)  # Feature sequence for iteration
+    shuffled_sets = [shuffle(1:n) for _ in 1:Nsim]   # List of Nsim shuffled vectors
+    repeated_list = vcat(shuffled_sets...) 
+    # sets = collect(1:n)  # All feature indices
+    # repeated_list = repeat(sets, Nsim)  # Feature sequence for iteration
 
     # Initial GIC calculation and inverse covariance
     GIC_coef_sets = Init_Columns

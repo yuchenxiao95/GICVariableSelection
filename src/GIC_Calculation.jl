@@ -280,7 +280,7 @@ function Calculate_ICOMP_short(Y::Union{AbstractVector, AbstractMatrix}, X::Abst
 
     # Compute ICOMP
     ICOMP = (Y' * Hat_matrix * Y) / T - (K * sample_variance) / sqrt(T) -
-    ( K * log(abs(tr(sample_variance *Inverse) / K)) - logabsdet(sample_variance *Inverse)[1])
+    ( K * log(abs(tr(sample_variance * Inverse) / K)) - logabsdet(sample_variance *Inverse)[1])
     
     return ICOMP
 end
