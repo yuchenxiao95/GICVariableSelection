@@ -3,6 +3,7 @@ using Distributions
 using Random
 using DataFrames
 using Test
+using GLM
 
 @testset "Univariate Normal Model Selection" begin
     N, P, k = 1000, 500, 5
@@ -36,7 +37,7 @@ end
 
 
 @testset "Univariate Poisson Model Selection" begin
-    N, P, k = 1000, 500, 5
+    N, P, k = 3000, 100, 5
     rho = 0.0
     true_columns = sort(sample(1:P, k, replace=false))
     SNR = [0.09, 0.14, 0.25, 0.42, 0.71, 1.22, 2.07, 3.52, 6.00]
@@ -49,16 +50,20 @@ end
     X = Matrix(rand(MvNormal(mu, cov), N)')
 
     true_beta = zeros(P)
-    true_beta[true_columns] .= 2
+    true_beta[true_columns] .= 1
     variance = (true_beta' * cov * true_beta) / SNR[5]
     std = sqrt(variance)
 
     Y = LP_to_Y(X, true_beta, family="Poisson")
-
     init_cols  = collect(1:P)
-    tmp = GIC_Variable_Selection(X, Y_to_LP(Y,"Poisson"), init_cols, Calculate_SIC, Calculate_SIC_short, Nsim=8)
-
+    tmp = GIC_Variable_Selection(X, Y_to_LP(Float64.(Y),"Poisson"), init_cols, Calculate_SIC, Calculate_SIC_short, Nsim=4)
+    
     estimated = tmp[2][end]
+
+    X_selected = X[:, estimated]
+
+    beta_hat = Beta_estimate(Y, X_selected; family = :Poisson,  add_intercept = true)
+
     @test typeof(tmp[1]) == Vector{Float64}
     @test typeof(tmp[2]) == Vector{Vector{Int}}
     @test length(setdiff(true_columns, estimated)) <= k  # allow some tolerance
@@ -101,6 +106,13 @@ end
 
     estimated = tmp[2][end]
     all_true = unique(reduce(vcat, multi_beta_true_columns))
+
+    X_selected = X[:, estimated ]
+
+    beta_hat = Beta_estimate(Y, X_selected; family = :MultivariateNormal)
+
+    idx = vec(any(multi_beta .!= 0.0, dims = 2))   # Boolean vector marking rows with any non-zero
+    true_beta = multi_beta[idx, :]  
 
     @test typeof(tmp[1]) == Vector{Float64}
     @test typeof(tmp[2]) == Vector{Vector{Int}}

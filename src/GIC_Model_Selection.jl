@@ -1,28 +1,6 @@
 using Random
 using LinearAlgebra
 
-"""
-    GIC_Variable_Selection(X, Y, Init_Columns, Calculate_GIC, Calculate_GIC_short; Nsim=1)
-
-Perform variable selection using Generalized Information Criterion (GIC) with iterative feature 
-addition/removal. Optimized for both single-response (vector `Y`) and multi-response (matrix `Y`) cases.
-
-# Arguments
-- `X::AbstractMatrix`: Design matrix of size `(n, p)` where `n` = samples, `p` = features.
-- `Y::Union{AbstractVector, AbstractMatrix}`: Response vector (`n × 1`) or matrix (`n × q` for `q` responses).
-- `Init_Columns::AbstractVector{Int}`: Initial column indices (features) to include in the model.
-- `Calculate_GIC`: Function to compute full GIC and inverse covariance matrix. Signature `(Y, X_subset) -> (GIC, M_inv)`.
-- `Calculate_GIC_short`: Function to compute GIC efficiently using pre-calculated `M_inv`. Signature `(Y, X_subset, M_inv) -> GIC`.
-- `Nsim::Int64=1`: Number of Monte Carlo simulations for stochastic search (default: deterministic).
-
-# Returns
-- `GIC_list::Vector{Float64}`: Trace of GIC values at each iteration.
-- `GIC_coeff::Vector{Vector{Int}}`: Selected feature indices at each iteration.
-
-# Notes
-- Uses Sherman-Morrison-Woodbury for efficient inverse updates when adding/removing features.
-- For multi-response `Y`, `Calculate_GIC` functions should return GIC as a matrix (e.g., trace for scalar comparison).
-"""
 function GIC_Variable_Selection(
     X::AbstractMatrix, 
     Y::Union{AbstractVector, AbstractMatrix}, 

@@ -2,7 +2,7 @@
 
 julia_version = "1.11.4"
 manifest_format = "2.0"
-project_hash = "5b884cdfaf8fc99317e1ed53c1d531f4d45971d3"
+project_hash = "d96b439e6efcfa409aaea2f017b12d90945d3753"
 
 [[deps.AbstractFFTs]]
 deps = ["LinearAlgebra"]
@@ -1412,9 +1412,11 @@ version = "1.7.0"
 
 [[deps.StatsBase]]
 deps = ["AliasTables", "DataAPI", "DataStructures", "LinearAlgebra", "LogExpFunctions", "Missings", "Printf", "Random", "SortingAlgorithms", "SparseArrays", "Statistics", "StatsAPI"]
-git-tree-sha1 = "29321314c920c26684834965ec2ce0dacc9cf8e5"
+git-tree-sha1 = "b81c5035922cc89c2d9523afc6c54be512411466"
+repo-rev = "master"
+repo-url = "https://github.com/JuliaStats/StatsBase.jl"
 uuid = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
-version = "0.34.4"
+version = "0.34.5"
 
 [[deps.StatsFuns]]
 deps = ["HypergeometricFunctions", "IrrationalConstants", "LogExpFunctions", "Reexport", "Rmath", "SpecialFunctions"]
@@ -1430,6 +1432,8 @@ weakdeps = ["ChainRulesCore", "InverseFunctions"]
 [[deps.StatsModels]]
 deps = ["DataAPI", "DataStructures", "LinearAlgebra", "Printf", "REPL", "ShiftedArrays", "SparseArrays", "StatsAPI", "StatsBase", "StatsFuns", "Tables"]
 git-tree-sha1 = "9022bcaa2fc1d484f1326eaa4db8db543ca8c66d"
+repo-rev = "master"
+repo-url = "https://github.com/JuliaStats/StatsModels.jl"
 uuid = "3eaba693-59b7-5ba5-a881-562e759f1c8d"
 version = "0.7.4"
 

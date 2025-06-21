@@ -19,7 +19,8 @@ using LogExpFunctions
 using Plots
 using StatsBase
 using StatsPlots
-
+using StatsModels
+using GLM
 # Include your files
 include("GIC_Calculation.jl")
 include("GIC_Model_Selection.jl")
