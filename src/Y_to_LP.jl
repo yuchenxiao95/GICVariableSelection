@@ -26,44 +26,46 @@ Transform observed responses `Y` into linear predictors using canonical link fun
 - `Vector{Float64}`: Approximated linear predictors (η = g(μ)).
 """
 
-function Y_to_LP(Y::Vector{Float64}, family::String;
-                  shape::Union{Nothing, Float64} = nothing, 
-                  n_trials::Union{Nothing, Int64} = nothing, 
-                  std::Union{Nothing, Float64} = nothing)
+# ─────────────────────────────────────────────────────────────────────────────
+# 2 · Y_to_LP  — map Y back to canonical linear predictor
+# ─────────────────────────────────────────────────────────────────────────────
+function Y_to_LP(
+        Y::AbstractVector,
+        family::AbstractString;
+        shape::Union{Nothing,Float64}    = nothing,
+        n_trials::Union{Nothing,Int}     = nothing,
+        n_categories::Union{Nothing,Int} = nothing)
 
     if family == "Binomial"
-        if isnothing(n_trials)
-            error("`n_trials` must be specified for Binomial family.")
-        end
-        p = Y ./ n_trials
-        p_adjusted = copy(p)
-        p_adjusted[p .== 0.0] .= 0.01  # avoid log(0)
-        p_adjusted[p .== 1.0] .= 0.99  # avoid log(∞)
-        return log.(p_adjusted ./ (1 .- p_adjusted))
+        n_trials === nothing && error("n_trials required")
+        p = clamp.(Float64.(Y) ./ n_trials, 0.01, 0.99)
+        return log.(p ./ (1 .- p))
 
     elseif family == "Bernoulli"
-        Y_adjusted = copy(Y)
-        Y_adjusted[Y .== 0.0] .= 0.01
-        Y_adjusted[Y .== 1.0] .= 0.99
-        return log.(Y_adjusted ./ (1 .- Y_adjusted))
+        p = clamp.(Float64.(Y), 0.01, 0.99)
+        return log.(p ./ (1 .- p))
 
-    elseif family == "Normal"
-        return Y
+    elseif family == "Normal" || family == "MultivariateNormal"
+        return Float64.(Y)
 
     elseif family == "Poisson"
-        Y_adjusted = copy(Y)
-        Y_adjusted[Y .== 0.0] .= 0.1
-        return log.(Y_adjusted)
+        return log.(max.(Float64.(Y), 0.1))
 
-    elseif family == "Gamma" || family == "Exponential"
-        Y_adjusted = copy(Y)
-        Y_adjusted[Y .== 0.0] .= 0.1
-        return log.(Y_adjusted)
+    elseif family in ("Gamma", "Exponential")
+        return log.(max.(Float64.(Y), 0.1))
 
-    elseif family == "MultivariateNormal"
-        return Y
+    elseif family == "Multinomial"
+        K = isnothing(n_categories) ? maximum(Y) : n_categories
+        K ≥ 2 || error("n_categories must be ≥2")
+        n = length(Y)
+        base = 0.01 / (K-1)
+        P   = fill(base, n, K)
+        @inbounds for i in 1:n
+            P[i, Y[i]] = 0.99
+        end
+        return log.(P[:,1:K-1] ./ P[:,K])          # n × (K-1)
 
     else
-        error("Unsupported family: $family")
+        error("Unsupported family $family")
     end
 end

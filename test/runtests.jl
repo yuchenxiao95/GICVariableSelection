@@ -54,15 +54,15 @@ end
     variance = (true_beta' * cov * true_beta) / SNR[5]
     std = sqrt(variance)
 
-    Y = LP_to_Y(X, true_beta, family="Poisson")
+    Y = LP_to_Y(X, true_beta, family="Binomial", n_trials = 1)
     init_cols  = collect(1:P)
-    tmp = GIC_Variable_Selection(X, Y_to_LP(Float64.(Y),"Poisson"), init_cols, Calculate_SIC, Calculate_SIC_short, Nsim=4)
+    tmp = GIC_Variable_Selection(X, Y_to_LP(Float64.(Y),"Binomial",n_trials=1), init_cols, Calculate_SIC, Calculate_SIC_short, Nsim=4)
     
     estimated = tmp[2][end]
 
     X_selected = X[:, estimated]
 
-    beta_hat = Beta_estimate(Y, X_selected; family = :Poisson,  add_intercept = true)
+    beta_hat = Beta_estimate(Y, X_selected; family = :Binomial,  add_intercept = false)
 
     @test typeof(tmp[1]) == Vector{Float64}
     @test typeof(tmp[2]) == Vector{Vector{Int}}
@@ -99,17 +99,19 @@ end
         cov_p[i, i] = 1.0
     end
 
-    Y = LP_to_Y(X, multi_beta, family="MultivariateNormal", cov_matrix=cov_p)
+    Y = LP_to_Y(X, multi_beta, family="Multinomial", n_categories = 6, cov_matrix=cov_p)
+
 
     init_cols  = collect(1:P)
-    tmp = GIC_Variable_Selection(X, Y, init_cols, Calculate_SIC, Calculate_SIC_short, Nsim=8)
+    tmp = GIC_Variable_Selection(X, Y_to_LP(Y, "Multinomial", n_categories = 6), init_cols, Calculate_SIC, Calculate_SIC_short, Nsim=4)
+
 
     estimated = tmp[2][end]
     all_true = unique(reduce(vcat, multi_beta_true_columns))
 
     X_selected = X[:, estimated ]
 
-    beta_hat = Beta_estimate(Y, X_selected; family = :MultivariateNormal)
+    beta_hat = Beta_estimate(Y, X_selected; family = :Multinomial)
 
     idx = vec(any(multi_beta .!= 0.0, dims = 2))   # Boolean vector marking rows with any non-zero
     true_beta = multi_beta[idx, :]  
