@@ -2,6 +2,7 @@
 
 julia_version = "1.11.5"
 manifest_format = "2.0"
+<<<<<<< HEAD
 project_hash = "480d1bd2cfd440b1436e5bd598e86039bc63f4af"
 
 [[deps.ADTypes]]
@@ -20,6 +21,9 @@ deps = ["LinearAlgebra", "SparseArrays", "SuiteSparse_jll"]
 git-tree-sha1 = "45a1272e3f809d36431e57ab22703c6896b8908f"
 uuid = "14f7f29c-3bd6-536c-9a0b-7339e30b5a3e"
 version = "0.5.3"
+=======
+project_hash = "ed71864884bc5b1a5a3fbcf013ad1318452ab212"
+>>>>>>> f39eccd (some changes)
 
 [[deps.AbstractFFTs]]
 deps = ["LinearAlgebra"]
